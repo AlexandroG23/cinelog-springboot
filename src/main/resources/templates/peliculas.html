@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>CineLog - Tu biblioteca de películas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-zinc-900 via-gray-900 to-stone-900 min-h-screen font-sans">
+
+<div class="max-w-7xl mx-auto px-4 py-6">
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+
+    <!-- Título -->
+    <h2 class="text text-center text-4xl font-bold text-purple-200 " th:if="${modo == 'inicio'}">Estrenos en cartelera</h2>
+    <h2 class="text text-center text-4xl font-bold text-green-200" th:if="${modo != 'inicio'}">Películas populares</h2>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center py-4 mb-4">
+        <h1 class="text-2xl font-extrabold text-pink-200">Cinelog</h1>
+        <h3><a href="/favoritos" class="text-pink-500 text-2xl font-bold">Mis Favoritos</a></h3>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-bold rounded-lg text-md px-2 py-2 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-red-200 dark:hover:bg-gray-700 me-2 mb-2">
+                Cerrar sesión
+            </button>
+        </form>
+    </header>
+
+    <!-- Buscador -->
+    <form action="/buscar" method="get" class="mb-6 pb-2 justify-center md:mx-[10rem] xl:mx-[20rem]">
+        <div class="flex gap-2 bg-slate-950 hover:bg-neutral-900 hover:border-solid border-indigo-500/50 hover:border-indigo-500 border-2 p-1 rounded-full">
+            <input type="text" name="q"
+                   class="px-4 py-2 bg-transparent placeholder-gray-400 text-white focus:outline-none rounded-full w-full"
+                   placeholder="Harry Potter y el prisionero de Azkaban" required>
+            <button type="submit"
+                    class="bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-gray-800 transition">
+                Buscar
+            </button>
+        </div>
+    </form>
+
+
+    <!-- Resultados -->
+    <div th:if="${busqueda != null}" class="mb-4">
+        <h5 class="text-yellow-200" th:text="'Resultados para: ' + ${busqueda}"></h5>
+    </div>
+
+    <!-- Películas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${peliculas != null and #lists.size(peliculas) > 0}">
+        <div th:each="p : ${peliculas}" class="flex flex-col bg-white shadow rounded-t-2xl overflow-hidden group relative">
+
+            <!-- Imagen -->
+            <img th:if="${p.posterPath != null}" th:src="'https://image.tmdb.org/t/p/w500' + ${p.posterPath}"
+                 th:alt="${p.title}" class="h-[30rem] w-full object-cover rounded-t-xl">
+
+            <!-- Contenido -->
+            <div class="flex flex-col bg-gray-800 flex-grow justify-between p-4 relative">
+
+                <div>
+                    <h3 class="text-lg text-white font-bold mx-2 text-center z-0" th:text="${p.title}">Título</h3>
+                    <p class="text-sm italic text-center text-gray-400 pb-2" th:text="${p.originalTitle}" th:if="${p.originalTitle != p.title}">Título original</p>
+                </div>
+
+                <div th:if="${p.voteAverage != null}" class="justify-center text-yellow-400 font-semibold flex items-center gap-1">
+                    <span class="text-xl">⭐</span>
+                    <span th:text="${#numbers.formatDecimal(p.voteAverage, 1, 1)}">0.0</span>
+                    <span class="text-white text-sm">/10 en</span>
+                    <span class="text-cyan-400 text-sm font-bold">TMDB</span>
+                    <span th:if="${p.voteCount != null}" class="text-gray-300 text-sm">(<span th:text="${p.voteCount}">0</span> votos)</span>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-1 mt-2">
+                    <th:block th:each="g : ${p.genreNames}">
+                        <span th:switch="${g}">
+                            <span th:case="'Acción'"
+                                  th:text="${g}"
+                                  style="background-color:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Aventura'"
+                                  th:text="${g}"
+                                  style="background-color:#dcfce7; color:#166534; border:1px solid #86efac;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Animación'"
+                                  th:text="${g}"
+                                  style="background-color:#fef9c3; color:#92400e; border:1px solid #fde68a;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Comedia'"
+                                  th:text="${g}"
+                                  style="background-color:#e0e7ff; color:#3730a3; border:1px solid #a5b4fc;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Drama'"
+                                  th:text="${g}"
+                                  style="background-color:#ede9fe; color:#6b21a8; border:1px solid #c4b5fd;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Terror'"
+                                  th:text="${g}"
+                                  style="background-color:#fce7f3; color:#9d174d; border:1px solid #f9a8d4;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Ciencia ficción'"
+                                  th:text="${g}"
+                                  style="background-color:#d4f3f9; color:#0f4d75; border:1px solid #97e2e5;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Misterio'"
+                                  th:text="${g}"
+                                  style="background-color:#f3e8ff; color:#7f1d7f; border:1px solid #f59af5;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Historia'"
+                                  th:text="${g}"
+                                  style="background-color:#fff5f7; color:#4b2c20; border:1px solid #fed7e2;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Música'"
+                                  th:text="${g}"
+                                  style="background-color:#ffebeb; color:#a40101; border:1px solid #f59e0b;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <span th:case="'Romance'"
+                                  th:text="${g}"
+                                  style="background-color:#e5f3f9; color:#0f4d75; border:1px solid #97e2e5;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+
+                            <!-- Default -->
+                            <span th:case="*"
+                                  th:text="${g}"
+                                  style="background-color:#dbeafe; color:#1e3a8a; border:1px solid #93c5fd;"
+                                  class="text-xs font-medium me-2 px-2.5 py-1 rounded-md"></span>
+                        </span>
+                    </th:block>
+                </div>
+
+                <!-- Footer de la tarjeta -->
+                <div class="mt-3 pt-4 text-center gap-2 flex justify-center">
+
+
+                    <button
+                            type="button"
+                            class="open-modal-btn text-gray-200 bg-gray-950 hover:bg-gray-700 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-full text-xs px-5 py-2.5 text-center inline-flex items-center me-2 mb-2 animate-pulse"
+                            th:attr="
+                                    data-title=${p.title},
+                                    data-overview=${p.overview},
+                                    data-backdrop='https://image.tmdb.org/t/p/w780' + ${p.backdropPath},
+                                    data-release=${p.releaseDate},
+                                    data-trailer=${p.youtubeTrailerKey}">
+                        Ver más
+                    </button>
+
+                    <!-- Botón "❤️ Favorito" -->
+                    <form th:action="@{/favoritos/agregar/{id}(id=${p.id})}" method="post">
+                        <button
+                                type="submit"
+                                class="text-pink-200 bg-gray-950 hover:bg-gray-700 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-full text-xs px-5 py-2.5 text-center inline-flex items-center me-2 mb-2">
+                            Favorito ❤️
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Sin resultados -->
+    <div class="text-center text-yellow-700 font-semibold" th:if="${peliculas != null and #lists.isEmpty(peliculas)}">
+        No se encontraron resultados para "<span th:text="${busqueda}"></span>"
+    </div>
+
+    <!-- Paginación -->
+    <div class="text-white mt-8 pt-2 flex justify-center" th:if="${totalPaginas > 1}">
+        <ul class="flex space-x-2">
+            <li th:classappend="${paginaActual == 1} ? 'pointer-events-none opacity-50'">
+                <a class="px-3 py-1 bg-violet-900 border rounded"
+                   th:href="@{/peliculas(page=${paginaActual - 1})}">Anterior</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(1, totalPaginas)}"
+                th:classappend="${i == paginaActual} ? 'bg-yellow-300 text-cyan-900'">
+                <a class="px-3 py-1 border rounded" th:href="@{/peliculas(page=${i})}" th:text="${i}">1</a>
+            </li>
+            <li th:classappend="${paginaActual == totalPaginas} ? 'pointer-events-none opacity-50'">
+                <a class="px-3 py-1 bg-violet-900 border rounded"
+                   th:href="@{/peliculas(page=${paginaActual + 1})}">Siguiente</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Navegación adicional -->
+    <div class="text-center mt-6">
+        <a class="bg-blue-500 text-white px-4 py-2 rounded mr-2 hover:bg-blue-600" th:href="@{/}">Inicio</a>
+        <a class="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200" th:href="@{/peliculas}">Populares</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-8 text-sm text-gray-600">
+        <p>Desarrollado por <a href="https://github.com/AlexandroG23" class="text-blue-600 hover:underline">Alexandro
+            Asencios</a> 🤙</p>
+    </footer>
+
+</div>
+
+<!-- Modal -->
+<div id="movieModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-70 flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-2xl w-full mx-4 my-10 flex flex-col max-h-[90vh]">
+
+        <!-- Backdrop -->
+        <img id="modalBackdrop" class="w-full h-64 object-cover rounded-t-lg" alt="Backdrop">
+
+        <!-- Contenido scrollable -->
+        <div class="p-6 overflow-y-auto flex-1 space-y-4">
+            <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 dark:text-white">Título</h2>
+            <p id="modalReleaseDate" class="text-md text-gray-500 dark:text-gray-300">📅 Fecha de estreno</p>
+            <p id="modalOverview" class="text-gray-700 dark:text-gray-200 leading-relaxed">Resumen...</p>
+
+            <!-- Trailer -->
+            <div id="trailerContainer" class="aspect-video hidden">
+                <iframe id="modalTrailer" class="w-full h-full" src="" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen loading="lazy">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 text-right">
+            <button onclick="closeModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/style.js"></script>
+
+</body>
+</html>

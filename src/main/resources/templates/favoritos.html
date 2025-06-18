@@ -1,0 +1,71 @@
+<!-- templates/favoritos.html -->
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Películas Favoritas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+<div class="container mx-auto px-4 py-3">
+  <h1 class="text-center text-4xl py-5 font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%">Mis Películas Favoritas</h1>
+
+  <div th:if="${#lists.isEmpty(favoritos)}" class="text-center text-gray-500">
+    <p>No tienes películas favoritas guardadas.</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" th:if="${!#lists.isEmpty(favoritos)}">
+    <div th:each="pelicula : ${favoritos}" class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col">
+
+      <img th:src="@{|https://image.tmdb.org/t/p/w500/${pelicula.posterPath}|}" alt="Poster" class="w-full h-72 object-cover">
+
+      <div class="p-4 flex-grow flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-semibold mb-2" th:text="${pelicula.titulo}"></h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3" th:text="${pelicula.overview}"></p>
+        </div>
+
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2" th:text="'Estreno: ' + ${pelicula.releaseDate}"></p>
+
+        <button type="button"
+                class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded mt-3 text-sm"
+                th:onclick="'abrirModalEliminar(' + ${pelicula.id} + ')'">
+          🗑 Eliminar
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="text-center mb-3 py-5">
+  <a href="/peliculas"
+     class="inline-block bg-cyan-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition">
+    ⬅ Volver al Inicio
+  </a>
+</div>
+
+<!-- Modal de Confirmación para Eliminar -->
+<div id="modalEliminar" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">¿Eliminar esta película de tus favoritos?</h2>
+    <form id="formEliminar" method="post">
+      <input type="hidden" name="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="cerrarModalEliminar()"
+                class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 text-gray-900 dark:text-white px-4 py-2 rounded">
+          Cancelar
+        </button>
+        <button type="submit"
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+          Eliminar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/style.js"></script>
+
+</body>
+</html>

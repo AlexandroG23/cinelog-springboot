@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión - Cinelog</title>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center min-h-screen">
+
+<div class="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md relative">
+    <h2 class="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">Iniciar Sesión</h2>
+
+    <form th:action="@{/usuario/login}" method="post" class="space-y-4">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div>
+            <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
+            <input type="text" id="username" name="username" required
+                   class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+        </div>
+
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
+            <input type="password" id="password" name="password" required
+                   class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+        </div>
+
+        <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+            Iniciar sesión
+        </button>
+    </form>
+
+    <p class="text-red-600 dark:text-red-400 text-center mt-4 text-sm" th:if="${param.error}">Correo o contraseña incorrectos.</p>
+    <p class="text-green-600 dark:text-green-400 text-center mt-4 text-sm" th:if="${param.logout}">Has cerrado sesión correctamente.</p>
+
+    <p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
+        ¿No tienes una cuenta?
+        <a th:href="@{/usuario/registro}" class="text-blue-600 hover:underline dark:text-blue-400">Regístrate aquí</a>
+    </p>
+</div>
+
+</body>
+</html>
