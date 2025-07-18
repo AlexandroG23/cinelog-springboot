@@ -88,7 +88,7 @@ docker run --name mysql -e MYSQL_ROOT_PASSWORD=123456 -p 33060:3306 -d mysql:8.0
 
 ``` csharp
 src
-├── controller        # Controladores MVC
+├── controller       # Controladores MVC
 ├── dto              # Objetos de transferencia de datos
 ├── model            # Entidades JPA
 ├── repository       # Interfaces de acceso a datos
@@ -98,3 +98,11 @@ src
     ├── templates    # Vistas Thymeleaf
     └── static       # Archivos estáticos (JS, CSS)
 ```
+
+## 📸 Capturas
+
+![just-the-basics](https://raw.githubusercontent.com/AlexandroG23/cinelog-springboot/60a966c2c269ffa676c5a978eb6f4506d8738807/src/main/resources/static/img/CineLogCap.png)
+
+![just-the-basics](https://raw.githubusercontent.com/AlexandroG23/cinelog-springboot/60a966c2c269ffa676c5a978eb6f4506d8738807/src/main/resources/static/img/CineLogFavoritos.png)
+
+![just-the-basics](https://raw.githubusercontent.com/AlexandroG23/cinelog-springboot/60a966c2c269ffa676c5a978eb6f4506d8738807/src/main/resources/static/img/CineLogPreview.png)
